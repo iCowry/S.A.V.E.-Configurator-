@@ -1,16 +1,17 @@
 import React, { useMemo } from 'react';
-import { X, Check, Box, Lightbulb, Monitor, Cpu } from 'lucide-react';
+import { X, Check, Box, Lightbulb, Monitor, Cpu, Watch, Sparkles } from 'lucide-react';
 import { ConfigState, CategoryId, Language, Product } from '../types';
 import { PRODUCTS, UI_STRINGS } from '../constants';
 
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onConfirm: () => void;
   selections: ConfigState;
   lang: Language;
 }
 
-export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, selections, lang }) => {
+export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfirm, selections, lang }) => {
   if (!isOpen) return null;
 
   // Icons helper
@@ -18,7 +19,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, s
     [CategoryId.DESK]: Box,
     [CategoryId.LIGHT]: Lightbulb,
     [CategoryId.TERMINAL]: Monitor,
-    [CategoryId.ACCESSORIES]: Cpu
+    [CategoryId.ACCESSORIES]: Cpu,
+    [CategoryId.WEARABLES]: Watch,
+    [CategoryId.COBRANDED]: Sparkles
   };
 
   // Calculate items and total
@@ -42,6 +45,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, s
     findAndAdd(CategoryId.DESK, selections.desk);
     findAndAdd(CategoryId.LIGHT, selections.light);
     findAndAdd(CategoryId.TERMINAL, selections.terminal);
+    selections.wearables.forEach(id => findAndAdd(CategoryId.WEARABLES, id));
+    selections.cobranded.forEach(id => findAndAdd(CategoryId.COBRANDED, id));
     selections.accessories.forEach(accId => {
       findAndAdd(CategoryId.ACCESSORIES, accId);
     });
@@ -86,7 +91,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, s
             </thead>
             <tbody className="divide-y divide-gray-50">
               {items.map((item, idx) => {
-                const Icon = icons[item.categoryId];
+                const Icon = icons[item.categoryId] || Cpu;
                 return (
                   <tr key={`${item.categoryId}-${item.product.id}-${idx}`} className="group hover:bg-gray-50/50 transition-colors">
                     <td className="py-4 pl-2">
@@ -128,10 +133,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, s
               {UI_STRINGS.cancel[lang]}
             </button>
             <button 
-              onClick={() => {
-                alert(UI_STRINGS.orderSuccess[lang]);
-                onClose();
-              }}
+              onClick={onConfirm}
               className="flex-1 px-4 py-3 rounded-xl bg-gray-900 text-white font-semibold hover:bg-black hover:shadow-lg transition-all flex items-center justify-center gap-2"
             >
               <Check size={18} />

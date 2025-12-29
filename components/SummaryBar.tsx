@@ -13,7 +13,7 @@ interface SummaryBarProps {
 export const SummaryBar: React.FC<SummaryBarProps> = ({ totalPrice, summaryText, lang, onBuyClick }) => {
   return (
     <div className="sticky bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t border-gray-200 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] px-4 py-4 md:py-6 safe-area-pb">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         
         {/* Left: Summary Text */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-auto">

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ConfigState, CategoryId, Language } from '../types';
 import { PRODUCTS, UI_STRINGS } from '../constants';
-import { Monitor, Lamp, AppWindow, Cpu, Box, Gamepad2, Disc } from 'lucide-react';
+import { Monitor, Lamp, AppWindow, Cpu, Box, Gamepad2, Disc, Watch, Sparkles } from 'lucide-react';
 
 interface PreviewAreaProps {
   selections: ConfigState;
@@ -18,17 +18,31 @@ export const PreviewArea: React.FC<PreviewAreaProps> = ({ selections, lang }) =>
   const light = getProduct(CategoryId.LIGHT, selections.light);
   const terminal = getProduct(CategoryId.TERMINAL, selections.terminal);
   
-  // Memoize accessories list
-  const activeAccessories = useMemo(() => {
+  // Memoize all active extra items (accessories, wearables, cobranded)
+  const activeExtras = useMemo(() => {
     const accCategory = PRODUCTS.find(c => c.id === CategoryId.ACCESSORIES);
-    if (!accCategory) return [];
-    return accCategory.items.filter(item => selections.accessories.includes(item.id));
-  }, [selections.accessories]);
+    const wearCategory = PRODUCTS.find(c => c.id === CategoryId.WEARABLES);
+    const cobrandCategory = PRODUCTS.find(c => c.id === CategoryId.COBRANDED);
+
+    const accessories = accCategory?.items.filter(item => selections.accessories.includes(item.id)) || [];
+    const wearables = wearCategory?.items.filter(item => selections.wearables.includes(item.id)) || [];
+    const cobranded = cobrandCategory?.items.filter(item => selections.cobranded.includes(item.id)) || [];
+
+    return [...accessories, ...wearables, ...cobranded];
+  }, [selections.accessories, selections.wearables, selections.cobranded]);
 
   // Check for specific cockpit accessories
-  const hasRacingWheel = activeAccessories.some(a => a.id === 'A12');
-  const hasJoystick = activeAccessories.some(a => a.id === 'A11');
+  const hasRacingWheel = activeExtras.some(a => a.id === 'A12');
+  const hasJoystick = activeExtras.some(a => a.id === 'A11');
   const hasCockpitScreen = terminal?.id === 'T6';
+
+  const getIcon = (item: any) => {
+    if (item.categoryId === CategoryId.WEARABLES) return <Watch size={12} className="text-purple-500" />;
+    if (item.categoryId === CategoryId.COBRANDED) return <Sparkles size={12} className="text-amber-500" />;
+    if (item.id === 'A12') return <Disc size={12} className="text-red-500" />;
+    if (item.id === 'A11') return <Gamepad2 size={12} className="text-red-500" />;
+    return <Cpu size={12} className="text-indigo-500" />;
+  };
 
   return (
     <div className={`h-full w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-8 flex flex-col overflow-hidden relative isolate transition-colors duration-700 ${hasCockpitScreen ? 'bg-slate-900 border-slate-800' : 'bg-white'}`}>
@@ -125,7 +139,7 @@ export const PreviewArea: React.FC<PreviewAreaProps> = ({ selections, lang }) =>
                         <div className="w-20 h-2 bg-gray-800"></div>
                         <div className="w-2 h-20 bg-gray-800"></div>
                         <div className="w-4 h-4 rounded-full bg-red-600 absolute"></div>
-                        <div className="absolute -top-6 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded-full">Wheel</div>
+                        <div className="absolute -top-6 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded-full">{UI_STRINGS.visualWheel[lang]}</div>
                      </div>
                      <div className="w-2 h-10 bg-gray-800 mx-auto -mt-2"></div>
                   </div>
@@ -139,7 +153,7 @@ export const PreviewArea: React.FC<PreviewAreaProps> = ({ selections, lang }) =>
                        <div className="w-2 h-2 bg-red-500 rounded-full absolute top-0 left-2"></div>
                      </div>
                      <div className="w-12 h-2 bg-gray-600 rounded-full mt-0"></div>
-                     <div className="absolute -top-8 -right-4 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded-full">Stick</div>
+                     <div className="absolute -top-8 -right-4 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded-full">{UI_STRINGS.visualStick[lang]}</div>
                   </div>
                 )}
 
@@ -166,14 +180,12 @@ export const PreviewArea: React.FC<PreviewAreaProps> = ({ selections, lang }) =>
       <div className={`flex-none min-h-[80px] pt-4 border-t transition-colors duration-500 ${hasCockpitScreen ? 'border-slate-800' : 'border-gray-100'}`}>
         <h3 className={`text-xs font-bold uppercase tracking-widest mb-3 ${hasCockpitScreen ? 'text-slate-500' : 'text-gray-400'}`}>{UI_STRINGS.installedModules[lang]}</h3>
         <div className="flex flex-wrap gap-2">
-          {activeAccessories.length === 0 && (
+          {activeExtras.length === 0 && (
              <span className="text-sm text-gray-300 italic">{UI_STRINGS.noAccessories[lang]}</span>
           )}
-          {activeAccessories.map(acc => (
+          {activeExtras.map(acc => (
             <div key={acc.id} className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-medium text-gray-600 animate-fadeIn">
-              {acc.id === 'A12' ? <Disc size={12} className="text-red-500"/> : 
-               acc.id === 'A11' ? <Gamepad2 size={12} className="text-red-500"/> :
-               <Cpu size={12} className="text-indigo-500"/>}
+              {getIcon(acc)}
               {acc.name[lang]}
             </div>
           ))}

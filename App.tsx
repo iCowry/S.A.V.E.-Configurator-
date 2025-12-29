@@ -5,13 +5,15 @@ import { PreviewArea } from './components/PreviewArea';
 import { ConfiguratorPanel } from './components/ConfiguratorPanel';
 import { SummaryBar } from './components/SummaryBar';
 import { CheckoutModal } from './components/CheckoutModal';
+import { CheckoutPage } from './components/CheckoutPage';
 import { Sparkles, Globe } from 'lucide-react';
 
 const App = () => {
   const [selections, setSelections] = useState<ConfigState>(INITIAL_STATE);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [lang, setLang] = useState<Language>('en');
+  const [lang, setLang] = useState<Language>('zh');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [view, setView] = useState<'configurator' | 'checkout'>('configurator');
 
   // Trigger simple entry animation
   useEffect(() => {
@@ -22,17 +24,22 @@ const App = () => {
     setSelections(prev => {
       const newState = { ...prev };
 
-      if (categoryId === CategoryId.ACCESSORIES) {
-        // Toggle logic for multi-select
-        const currentAccessories = newState.accessories;
-        if (currentAccessories.includes(productId)) {
-          newState.accessories = currentAccessories.filter(id => id !== productId);
+      // Handle Multi-select categories
+      if (
+        categoryId === CategoryId.ACCESSORIES || 
+        categoryId === CategoryId.WEARABLES || 
+        categoryId === CategoryId.COBRANDED
+      ) {
+        const currentSelection = newState[categoryId] as string[];
+        if (currentSelection.includes(productId)) {
+          // Remove
+          (newState as any)[categoryId] = currentSelection.filter(id => id !== productId);
         } else {
-          newState.accessories = [...currentAccessories, productId];
+          // Add
+          (newState as any)[categoryId] = [...currentSelection, productId];
         }
       } else {
         // Single select replacement logic
-        // Use type assertion to satisfy TypeScript index signature for specific keys
         (newState as any)[categoryId] = productId;
       }
 
@@ -58,18 +65,30 @@ const App = () => {
     findAndAdd(CategoryId.LIGHT, selections.light);
     findAndAdd(CategoryId.TERMINAL, selections.terminal);
     
-    selections.accessories.forEach(accId => {
-       findAndAdd(CategoryId.ACCESSORIES, accId);
-    });
+    selections.wearables.forEach(id => findAndAdd(CategoryId.WEARABLES, id));
+    selections.cobranded.forEach(id => findAndAdd(CategoryId.COBRANDED, id));
+    selections.accessories.forEach(id => findAndAdd(CategoryId.ACCESSORIES, id));
 
     return { totalPrice: total, summaryText: summaryParts.join(' + ') };
   }, [selections, lang]);
 
+  // Handle View: Checkout Page
+  if (view === 'checkout') {
+    return (
+      <CheckoutPage 
+        selections={selections} 
+        lang={lang} 
+        onBack={() => setView('configurator')} 
+      />
+    );
+  }
+
+  // Handle View: Configurator (Default)
   return (
     <div className={`min-h-screen flex flex-col transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       {/* Navigation Header */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="bg-blue-600 p-1.5 rounded-lg">
                <Sparkles className="text-white w-5 h-5" />
@@ -95,15 +114,17 @@ const App = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-6 md:px-6 lg:px-8 gap-6 grid grid-cols-1 lg:grid-cols-12 items-start relative">
+      <main className="flex-grow max-w-[1800px] mx-auto w-full px-4 py-6 md:px-6 lg:px-8 gap-6 grid grid-cols-1 lg:grid-cols-12 items-start relative">
         
         {/* Left Column: Preview (Sticky on Desktop) */}
-        <div className="lg:col-span-5 lg:sticky lg:top-24 lg:h-[calc(100vh-160px)] min-h-[400px]">
+        {/* Adjusted to 4 cols on XL screens to prioritize right content */}
+        <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24 lg:h-[calc(100vh-160px)] min-h-[400px]">
           <PreviewArea selections={selections} lang={lang} />
         </div>
 
         {/* Right Column: Controls */}
-        <div className="lg:col-span-7 h-full min-h-[500px]">
+        {/* Expanded to 8 cols on XL screens to show more modules */}
+        <div className="lg:col-span-7 xl:col-span-8 h-full min-h-[500px]">
           <ConfiguratorPanel 
             selections={selections} 
             onSelectionChange={handleSelectionChange} 
@@ -124,6 +145,11 @@ const App = () => {
       <CheckoutModal 
         isOpen={isCheckoutOpen} 
         onClose={() => setIsCheckoutOpen(false)} 
+        onConfirm={() => {
+          setIsCheckoutOpen(false);
+          setView('checkout');
+          window.scrollTo(0, 0);
+        }}
         selections={selections} 
         lang={lang} 
       />

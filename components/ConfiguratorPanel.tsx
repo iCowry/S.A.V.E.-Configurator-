@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CategoryId, ConfigState, Product, Language } from '../types';
 import { PRODUCTS, UI_STRINGS } from '../constants';
 import { ProductCard } from './ProductCard';
-import { Box, Lightbulb, Monitor, Cpu } from 'lucide-react';
+import { Box, Lightbulb, Monitor, Cpu, Watch, Sparkles } from 'lucide-react';
 
 interface ConfiguratorPanelProps {
   selections: ConfigState;
@@ -17,6 +17,8 @@ export const ConfiguratorPanel: React.FC<ConfiguratorPanelProps> = ({ selections
     [CategoryId.DESK]: Box,
     [CategoryId.LIGHT]: Lightbulb,
     [CategoryId.TERMINAL]: Monitor,
+    [CategoryId.WEARABLES]: Watch,
+    [CategoryId.COBRANDED]: Sparkles,
     [CategoryId.ACCESSORIES]: Cpu
   };
 
@@ -31,7 +33,7 @@ export const ConfiguratorPanel: React.FC<ConfiguratorPanelProps> = ({ selections
       {/* Category Tabs */}
       <div className="flex overflow-x-auto scrollbar-hide border-b border-gray-100 p-2 gap-2 bg-gray-50/50">
         {PRODUCTS.map((category) => {
-          const Icon = icons[category.id];
+          const Icon = icons[category.id] || Cpu;
           const isActive = activeTab === category.id;
           return (
             <button
@@ -54,7 +56,7 @@ export const ConfiguratorPanel: React.FC<ConfiguratorPanelProps> = ({ selections
 
       {/* Product Grid Area */}
       <div className="flex-grow p-6 overflow-y-auto bg-gray-50/30">
-        <div className="max-w-3xl mx-auto">
+        <div className="w-full">
           <div className="mb-6">
             <h3 className="text-xl font-bold text-gray-900">{currentCategory?.title[lang]}</h3>
             <p className="text-sm text-gray-500 mt-1">
@@ -64,11 +66,19 @@ export const ConfiguratorPanel: React.FC<ConfiguratorPanelProps> = ({ selections
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
             {currentCategory?.items.map((product) => {
-              const isSelected = currentCategory.multiSelect
-                ? selections.accessories.includes(product.id)
-                : selections[currentCategory.id as keyof Omit<ConfigState, 'accessories'>] === product.id;
+              // Determine if selected based on category type
+              let isSelected = false;
+              if (currentCategory.id === CategoryId.ACCESSORIES) {
+                isSelected = selections.accessories.includes(product.id);
+              } else if (currentCategory.id === CategoryId.WEARABLES) {
+                isSelected = selections.wearables.includes(product.id);
+              } else if (currentCategory.id === CategoryId.COBRANDED) {
+                isSelected = selections.cobranded.includes(product.id);
+              } else {
+                isSelected = selections[currentCategory.id as keyof Omit<ConfigState, 'accessories'|'wearables'|'cobranded'>] === product.id;
+              }
 
               return (
                 <ProductCard

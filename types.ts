@@ -1,8 +1,11 @@
+
 export enum CategoryId {
   DESK = 'desk',
   LIGHT = 'light',
   TERMINAL = 'terminal',
-  ACCESSORIES = 'accessories'
+  ACCESSORIES = 'accessories',
+  WEARABLES = 'wearables',
+  COBRANDED = 'cobranded'
 }
 
 export type Language = 'en' | 'zh';
@@ -33,4 +36,6 @@ export interface ConfigState {
   light: string;
   terminal: string;
   accessories: string[];
+  wearables: string[];
+  cobranded: string[];
 }

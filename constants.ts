@@ -16,6 +16,10 @@ export const UI_STRINGS = {
   buyNow: { en: "Buy Now", zh: "立即购买" },
   proceedToCheckout: { en: "Proceeding to checkout with: ", zh: "正在结算： " },
   
+  // Visual Indicator Labels
+  visualWheel: { en: "Wheel", zh: "方向盘" },
+  visualStick: { en: "Stick", zh: "摇杆" },
+
   // Checkout Modal Strings
   checkoutTitle: { en: "Order Summary", zh: "配置清单确认" },
   checkoutDesc: { en: "Review your custom configuration before purchasing.", zh: "请在下单前确认您的定制配置。" },
@@ -25,7 +29,24 @@ export const UI_STRINGS = {
   totalLabel: { en: "Total", zh: "总计" },
   cancel: { en: "Cancel", zh: "取消" },
   confirmOrder: { en: "Confirm Order", zh: "确认下单" },
-  orderSuccess: { en: "Order Placed Successfully!", zh: "下单成功！" }
+  orderSuccess: { en: "Order Placed Successfully!", zh: "下单成功！" },
+
+  // Checkout Page Strings
+  secureCheckout: { en: "Secure Checkout", zh: "安全结算" },
+  shippingDetails: { en: "Shipping Information", zh: "收货信息" },
+  fullName: { en: "Full Name", zh: "收货人姓名" },
+  email: { en: "Email Address", zh: "电子邮箱" },
+  phone: { en: "Phone Number", zh: "手机号码" },
+  address: { en: "Shipping Address", zh: "详细地址" },
+  paymentMethod: { en: "Payment Method", zh: "支付方式" },
+  wechatPay: { en: "WeChat Pay", zh: "微信支付" },
+  alipay: { en: "Alipay", zh: "支付宝" },
+  creditCard: { en: "Credit Card", zh: "信用卡" },
+  placeOrder: { en: "Place Order", zh: "提交订单" },
+  backToConfig: { en: "Back to Configurator", zh: "返回配置" },
+  orderCompleteTitle: { en: "Thank You!", zh: "感谢购买！" },
+  orderCompleteDesc: { en: "Your order has been confirmed. A confirmation email has been sent.", zh: "您的订单已确认。确认邮件已发送至您的邮箱。" },
+  returnHome: { en: "Return Home", zh: "返回首页" }
 };
 
 export const PRODUCTS: CategoryData[] = [
@@ -139,6 +160,71 @@ export const PRODUCTS: CategoryData[] = [
     ]
   },
   {
+    id: CategoryId.WEARABLES,
+    title: { en: "Wearables", zh: "穿戴设备" },
+    multiSelect: true,
+    items: [
+      { 
+        id: 'A4', 
+        name: { en: "Smart Watch", zh: "智能手表" }, 
+        price: 899, 
+        description: { en: "Health tracking, SOS", zh: "健康监测，一键呼救" }, 
+        categoryId: CategoryId.WEARABLES,
+        badge: { en: "New", zh: "新品" }
+      },
+      { 
+        id: 'A5', 
+        name: { en: "AR Glasses", zh: "AR眼镜" }, 
+        price: 2499, 
+        description: { en: "Immersive learning, HUD", zh: "沉浸式学习，抬头显示" }, 
+        categoryId: CategoryId.WEARABLES 
+      },
+      { 
+        id: 'A10', 
+        name: { en: "Pro Headset", zh: "专业耳麦" }, 
+        price: 599, 
+        description: { en: "Noise cancelling, 7.1 Surround", zh: "主动降噪，7.1环绕声" }, 
+        categoryId: CategoryId.WEARABLES 
+      },
+      { 
+        id: 'A13', 
+        name: { en: "Smart Band", zh: "智能手环" }, 
+        price: 249, 
+        description: { en: "Basic fitness/sleep tracking, Todo list", zh: "性价比之选，运动睡眠监测，待办备忘" }, 
+        categoryId: CategoryId.WEARABLES 
+      }
+    ]
+  },
+  {
+    id: CategoryId.COBRANDED,
+    title: { en: "Co-Branded", zh: "IP联名" },
+    multiSelect: true,
+    items: [
+      { 
+        id: 'A14', 
+        name: { en: "Wukong Edition", zh: "黑神话·悟空联名" }, 
+        price: 699, 
+        description: { en: "Golden Cudgel Stylus, 3D Skin", zh: "金箍棒触控笔，3D浮雕痛贴，天命人专属音效" }, 
+        categoryId: CategoryId.COBRANDED,
+        badge: { en: "Trending", zh: "全网热搜" }
+      },
+      { 
+        id: 'A15', 
+        name: { en: "Mobile Suit Set", zh: "机动战士联名" }, 
+        price: 899, 
+        description: { en: "Mecha Armor, RGB Matrix", zh: "全金属装甲，RGB矩阵，独角兽配色" }, 
+        categoryId: CategoryId.COBRANDED 
+      },
+      { 
+        id: 'A16', 
+        name: { en: "Capybara Zen", zh: "卡皮巴拉联名" }, 
+        price: 199, 
+        description: { en: "Plush Decor, Emotional Support", zh: "情绪稳定毛绒公仔，佛系解压，拒绝内卷" }, 
+        categoryId: CategoryId.COBRANDED 
+      }
+    ]
+  },
+  {
     id: CategoryId.ACCESSORIES,
     title: { en: "Expansion Pack", zh: "扩展包" },
     multiSelect: true,
@@ -162,21 +248,6 @@ export const PRODUCTS: CategoryData[] = [
         name: { en: "Magnetic Skin", zh: "磁吸桌贴" }, 
         price: 199, 
         description: { en: "Customizable Desk Cover", zh: "个性化桌垫，随心换" }, 
-        categoryId: CategoryId.ACCESSORIES 
-      },
-      { 
-        id: 'A4', 
-        name: { en: "Smart Watch", zh: "智能手表" }, 
-        price: 899, 
-        description: { en: "Health tracking, SOS", zh: "健康监测，一键呼救" }, 
-        categoryId: CategoryId.ACCESSORIES,
-        badge: { en: "New", zh: "新品" }
-      },
-      { 
-        id: 'A5', 
-        name: { en: "AR Glasses", zh: "AR眼镜" }, 
-        price: 2499, 
-        description: { en: "Immersive learning, HUD", zh: "沉浸式学习，抬头显示" }, 
         categoryId: CategoryId.ACCESSORIES 
       },
       { 
@@ -208,13 +279,6 @@ export const PRODUCTS: CategoryData[] = [
         categoryId: CategoryId.ACCESSORIES 
       },
       { 
-        id: 'A10', 
-        name: { en: "Pro Headset", zh: "专业耳麦" }, 
-        price: 599, 
-        description: { en: "Noise cancelling, 7.1 Surround", zh: "主动降噪，7.1环绕声" }, 
-        categoryId: CategoryId.ACCESSORIES 
-      },
-      { 
         id: 'A11', 
         name: { en: "Control Stick", zh: "操控摇杆" }, 
         price: 399, 
@@ -227,13 +291,6 @@ export const PRODUCTS: CategoryData[] = [
         price: 1299, 
         description: { en: "Force feedback, Pedals included", zh: "力反馈，含踏板" }, 
         categoryId: CategoryId.ACCESSORIES 
-      },
-      { 
-        id: 'A13', 
-        name: { en: "Smart Band", zh: "智能手环" }, 
-        price: 249, 
-        description: { en: "Basic fitness/sleep tracking, Todo list", zh: "性价比之选，运动睡眠监测，待办备忘" }, 
-        categoryId: CategoryId.ACCESSORIES 
       }
     ]
   }
@@ -243,5 +300,7 @@ export const INITIAL_STATE = {
   desk: 'D2',
   light: 'L2',
   terminal: 'T2',
-  accessories: [] as string[]
+  accessories: [] as string[],
+  wearables: [] as string[],
+  cobranded: [] as string[]
 };
