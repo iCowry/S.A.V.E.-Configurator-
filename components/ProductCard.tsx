@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CheckCircle2, Circle, Monitor, Lightbulb, Layers, Box } from 'lucide-react';
 import { Product, Language } from '../types';
 
 interface ProductCardProps {
@@ -10,6 +10,30 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, isSelected, onSelect, lang }) => {
+  
+  const renderPlaceholder = () => {
+    const enName = product.name.en.toLowerCase();
+    const zhName = product.name.zh;
+    
+    const iconProps = {
+        size: 48,
+        strokeWidth: 1.5,
+        className: `transition-colors duration-300 ${isSelected ? 'text-blue-500' : 'text-gray-300 group-hover:text-blue-300'}`
+    };
+
+    if (enName.includes('screen') || zhName.includes('屏')) {
+        return <Monitor {...iconProps} />;
+    }
+    if (enName.includes('light') || zhName.includes('光')) {
+        return <Lightbulb {...iconProps} />;
+    }
+    if (enName.includes('base') || zhName.includes('基座')) {
+        return <Layers {...iconProps} />;
+    }
+    
+    return <Box {...iconProps} />;
+  };
+
   return (
     <div
       onClick={() => onSelect(product)}
@@ -21,6 +45,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, isSelected, o
         }
       `}
     >
+      {/* Placeholder Image Area */}
+      <div className={`w-full h-32 rounded-lg mb-4 flex items-center justify-center transition-colors duration-300 ${isSelected ? 'bg-white' : 'bg-gray-50 group-hover:bg-blue-50/30'}`}>
+         {renderPlaceholder()}
+      </div>
+
       <div className="flex justify-between items-start mb-2">
         <div>
           <h3 className={`font-semibold text-base ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
